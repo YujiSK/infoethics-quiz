@@ -337,7 +337,7 @@ class QuizPageState extends State<QuizPage> {
 }
 
 Future<List<Map<String, dynamic>>> fetchQuizData() async {
-  final url = 'https://script.google.com/macros/s/AKfycbxLt5GNV6ovhrtUYL5CkKthWOXmugyE_XikUIflJCab9h5c3ZF3L1FpeSnsHiCcFfiP/exec'; // あなたのURL
+  const url = 'https://script.google.com/macros/s/AKfycbxLt5GNV6ovhrtUYL5CkKthWOXmugyE_XikUIflJCab9h5c3ZF3L1FpeSnsHiCcFfiP/exec'; // あなたのURL
   final response = await http.get(Uri.parse(url));
 
   // Log the response
