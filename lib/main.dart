@@ -1,6 +1,6 @@
 import 'package:animations/animations.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 import 'dart:developer' as developer;
 import 'dart:convert';
@@ -98,13 +98,11 @@ class QuizPageState extends State<QuizPage> {
 
   Future<void> _loadQuizData() async {
     try {
-      quizData = await fetchQuizData();
+      quizData = await loadQuizData(); // Updated function call
       _shuffleOptions();
       _updateProgress();
     } catch (e) {
-      // Replace print with developer.log
       developer.log('Error loading quiz data: $e');
-      // Consider updating the UI to reflect the error
     } finally {
       setState(() {
         _isLoading = false;
@@ -336,18 +334,8 @@ class QuizPageState extends State<QuizPage> {
   }
 }
 
-Future<List<Map<String, dynamic>>> fetchQuizData() async {
-  const url = 'https://script.google.com/macros/s/AKfycbxLt5GNV6ovhrtUYL5CkKthWOXmugyE_XikUIflJCab9h5c3ZF3L1FpeSnsHiCcFfiP/exec'; // あなたのURL
-  final response = await http.get(Uri.parse(url));
-
-  // Log the response
-  developer.log('Response status: ${response.statusCode}');
-  developer.log('Response body: ${response.body}');
-
-  if (response.statusCode == 200) {
-    final List<dynamic> data = jsonDecode(response.body);
-    return data.cast<Map<String, dynamic>>();
-  } else {
-    throw Exception('スプレッドシートのデータ読み込み失敗');
-  }
+Future<List<Map<String, dynamic>>> loadQuizData() async {
+  final jsonString = await rootBundle.loadString('assets/data/quiz.json');
+  final List<dynamic> jsonData = json.decode(jsonString);
+  return List<Map<String, dynamic>>.from(jsonData);
 }
