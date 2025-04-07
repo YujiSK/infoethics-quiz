@@ -22,9 +22,12 @@ jobs:
           cp -r build/web/* docs/
 
       - name: Commit and push changes
+        env:
+          TOKEN: ${{ secrets.GH_PAT }}
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
+          git remote set-url origin https://x-access-token:${TOKEN}@github.com/${{ github.repository }}
           git add docs/
-          git commit -m "📦 自動更新: build/web → docs"
+          git commit -m "📦 自動更新: build/web → docs" || echo "No changes to commit"
           git push
