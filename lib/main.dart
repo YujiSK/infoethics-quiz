@@ -5,6 +5,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'dart:developer' as developer;
 import 'dart:convert';
 import 'dart:math';
+
 void main() => runApp(const QuizApp());
 
 class QuizApp extends StatelessWidget {
@@ -119,7 +120,9 @@ class QuizPageState extends State<QuizPage> {
   }
 
   void checkAnswer(int index) {
-    if (answered) return;
+    if (answered) {
+      return;
+    }
 
     setState(() {
       selectedIndex = index;
@@ -276,14 +279,13 @@ class QuizPageState extends State<QuizPage> {
               return Card(
                 child: ListTile(
                   title: Text(option),
-                  tileColor:
-                      answered
-                          ? isCorrect
-                              ? Colors.green[100]
-                              : isSelected
+                  tileColor: answered
+                      ? isCorrect
+                          ? Colors.green[100]
+                          : isSelected
                               ? Colors.red[100]
                               : null
-                          : null,
+                      : null,
                   onTap: () => checkAnswer(index),
                 ),
               );
@@ -298,10 +300,9 @@ class QuizPageState extends State<QuizPage> {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color:
-                          resultMessage!.startsWith('正解')
-                              ? Colors.green
-                              : Colors.red,
+                      color: resultMessage!.startsWith('正解')
+                          ? Colors.green
+                          : Colors.red,
                     ),
                     textAlign: TextAlign.left,
                   ),
