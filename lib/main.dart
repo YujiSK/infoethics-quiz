@@ -1,7 +1,11 @@
+import 'package:animations/animations.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'dart:math';
 
-void main() => runApp(QuizApp());
+import 'dart:developer' as developer;
+import 'dart:convert';
+import 'dart:math';
+void main() => runApp(const QuizApp());
 
 class QuizApp extends StatelessWidget {
   const QuizApp({super.key});
@@ -10,8 +14,9 @@ class QuizApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: '情報倫理クイズ',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: TitlePage(),
+      home: const TitlePage(),
     );
   }
 }
@@ -23,7 +28,7 @@ class TitlePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('情報技術者倫理クイズ①'),
+        title: const Text('情報技術者倫理クイズ①'),
         automaticallyImplyLeading: false,
       ),
       body: Center(
@@ -31,28 +36,30 @@ class TitlePage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
+                  const Text(
                     '情報技術者倫理',
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 30),
-                  Text('名古屋国際工科専門職大学', style: TextStyle(fontSize: 20)),
-                  SizedBox(height: 10),
-                  Text('砂川優治', style: TextStyle(fontSize: 16)),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
+                  const Text('名古屋国際工科専門職大学', style: TextStyle(fontSize: 20)),
+                  const SizedBox(height: 10),
+                  const Text('砂川優治', style: TextStyle(fontSize: 16)),
+                  const SizedBox(height: 30),
                   ElevatedButton(
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => QuizPage()),
+                        MaterialPageRoute(
+                          builder: (context) => const QuizPage(),
+                        ),
                       );
                     },
-                    child: Text('クイズを開始'),
+                    child: const Text('クイズを開始'),
                   ),
                 ],
               ),
@@ -79,54 +86,30 @@ class QuizPageState extends State<QuizPage> {
   List<int> shuffledIndices = [];
   String? resultMessage;
   final ScrollController _scrollController = ScrollController();
-
-  final List<Map<String, dynamic>> quizData = [
-    {
-      "question": "実践的な社会問題の解決を扱う倫理学は，どれか？",
-      "options": ["形式倫理学", "応用倫理学", "メタ倫理学", "規範倫理学"],
-      "answer_index": 1,
-      "explanation": "応用倫理学は、生命倫理・環境倫理・情報倫理など、現代社会の実践的課題に倫理的視点から取り組む分野です。",
-    },
-    {
-      "question": "組織が脆弱性を修正するまで、脆弱性を開示しないという慣行は，どれか？",
-      "options": ["完全な開示", "十分な開示", "説明責任の開示", "責任ある開示"],
-      "answer_index": 3,
-      "explanation": "責任ある開示は、組織に修正の機会を与えるための倫理的アプローチです。",
-    },
-    {
-      "question": "情報倫理の対象ではないのは，どれか？",
-      "options": ["情報社会と法の差異", "価値観の対立", "地球環境の持続性", "情報についての行動指針"],
-      "answer_index": 2,
-      "explanation": "地球環境の持続性は環境倫理の領域です。",
-    },
-    {
-      "question": "職業倫理の説明は，どれか？",
-      "options": [
-        "職業を営む上で必要なコンプライアンス",
-        "職業を営む上で必要な善悪の判断基準",
-        "職業を営む上で必要な顧客価値",
-        "職業を営む上で必要な利益",
-      ],
-      "answer_index": 1,
-      "explanation": "職業倫理は、専門職が社会的責任を果たすために必要な善悪の判断基準を意味します。",
-    },
-    {
-      "question": "倫理綱領の記述でないのは，どれか？",
-      "options": [
-        "専門家が直面する具体的な事態への対処事例",
-        "社会に対する専門家の義務",
-        "専門家集団が果たすべき社会的責任",
-        "専門職の行動指針",
-      ],
-      "answer_index": 0,
-      "explanation": "倫理綱領は一般的な行動原則を示したものであり、具体的な事例の列挙は通常含まれません。",
-    },
-  ];
+  double progress = 0.0;
+  List<Map<String, dynamic>> quizData = [];
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _shuffleOptions();
+    _loadQuizData();
+  }
+
+  Future<void> _loadQuizData() async {
+    try {
+      quizData = await fetchQuizData();
+      _shuffleOptions();
+      _updateProgress();
+    } catch (e) {
+      // Replace print with developer.log
+      developer.log('Error loading quiz data: $e');
+      // Consider updating the UI to reflect the error
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   void _shuffleOptions() {
@@ -171,7 +154,15 @@ class QuizPageState extends State<QuizPage> {
       if (currentQuestion < quizData.length) {
         _shuffleOptions();
       }
+      _updateProgress();
     });
+  }
+
+  void _updateProgress() {
+    progress = (currentQuestion + 1) / quizData.length;
+    if (answered && currentQuestion == quizData.length - 1) {
+      progress = 1.0;
+    }
   }
 
   String getFeedbackMessage() {
@@ -190,10 +181,14 @@ class QuizPageState extends State<QuizPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     if (currentQuestion >= quizData.length) {
       return Scaffold(
         appBar: AppBar(
-          title: Text('情報技術者倫理クイズ①'),
+          title: const Text('情報技術者倫理クイズ①'),
           automaticallyImplyLeading: false,
         ),
         body: Center(
@@ -202,22 +197,22 @@ class QuizPageState extends State<QuizPage> {
             children: [
               Text(
                 'クイズ終了！正解数：$score / ${quizData.length}',
-                style: TextStyle(fontSize: 24),
+                style: const TextStyle(fontSize: 24),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Text(
                 getFeedbackMessage(),
-                style: TextStyle(fontSize: 18, color: Colors.blueGrey),
+                style: const TextStyle(fontSize: 18, color: Colors.blueGrey),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => TitlePage()),
+                    MaterialPageRoute(builder: (context) => const TitlePage()),
                   );
                 },
-                child: Text('最初に戻る'),
+                child: const Text('最初に戻る'),
               ),
             ],
           ),
@@ -229,7 +224,7 @@ class QuizPageState extends State<QuizPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('情報技術者倫理クイズ①'),
+        title: const Text('情報技術者倫理クイズ①'),
         automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
@@ -238,25 +233,59 @@ class QuizPageState extends State<QuizPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(question['question'], style: TextStyle(fontSize: 20)),
-            SizedBox(height: 16),
+            TweenAnimationBuilder<double>(
+              tween: Tween<double>(begin: progress, end: progress),
+              duration: const Duration(milliseconds: 500),
+              builder: (context, value, child) {
+                return OpenContainer(
+                  transitionDuration: const Duration(milliseconds: 500),
+                  openBuilder: (context, VoidCallback closeContainer) {
+                    return Container(
+                      padding: const EdgeInsets.all(8.0),
+                      child: LinearProgressIndicator(
+                        value: value,
+                        backgroundColor: Colors.grey[300],
+                        valueColor: const AlwaysStoppedAnimation<Color>(
+                          Colors.blue,
+                        ),
+                      ),
+                    );
+                  },
+                  closedBuilder: (context, VoidCallback openContainer) {
+                    return InkWell(
+                      onTap: openContainer,
+                      child: LinearProgressIndicator(
+                        value: value,
+                        backgroundColor: Colors.grey[300],
+                        valueColor: const AlwaysStoppedAnimation<Color>(
+                          Colors.blue,
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+            const SizedBox(height: 10),
+            Text(question['question'], style: const TextStyle(fontSize: 20)),
+            const SizedBox(height: 16),
             ...List.generate(question['options'].length, (index) {
               final originalIndex = shuffledIndices[index];
               final option = question['options'][originalIndex];
-              final isCorrect =
-                  originalIndex == question['answer_index']; // 元のindexで判定
+              final isCorrect = originalIndex == question['answer_index'];
               final isSelected = index == selectedIndex;
 
               return Card(
                 child: ListTile(
                   title: Text(option),
-                  tileColor: answered
-                      ? isCorrect
-                          ? Colors.green[100]
-                          : isSelected
+                  tileColor:
+                      answered
+                          ? isCorrect
+                              ? Colors.green[100]
+                              : isSelected
                               ? Colors.red[100]
                               : null
-                      : null,
+                          : null,
                   onTap: () => checkAnswer(index),
                 ),
               );
@@ -265,28 +294,31 @@ class QuizPageState extends State<QuizPage> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Text(
                     resultMessage != null ? '$resultMessage\n' : '',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: resultMessage!.startsWith('正解')
-                          ? Colors.green
-                          : Colors.red,
+                      color:
+                          resultMessage!.startsWith('正解')
+                              ? Colors.green
+                              : Colors.red,
                     ),
                     textAlign: TextAlign.left,
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(vertical: 15),
-                        textStyle: TextStyle(fontSize: 18),
+                        padding: const EdgeInsets.symmetric(vertical: 15),
+                        textStyle: const TextStyle(fontSize: 18),
                       ),
                       onPressed: nextQuestion,
-                      child: Text(currentQuestion == quizData.length - 1 ? '次へ' : '次の問題へ'),
+                      child: Text(
+                        currentQuestion == quizData.length - 1 ? '次へ' : '次の問題へ',
+                      ),
                     ),
                   ),
                 ],
@@ -301,5 +333,17 @@ class QuizPageState extends State<QuizPage> {
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+  }
+}
+
+Future<List<Map<String, dynamic>>> fetchQuizData() async {
+  final url = 'https://script.google.com/macros/s/AKfycbxLt5GNV6ovhrtUYL5CkKthWOXmugyE_XikUIflJCab9h5c3ZF3L1FpeSnsHiCcFfiP/exec'; // あなたのURL
+  final response = await http.get(Uri.parse(url));
+
+  if (response.statusCode == 200) {
+    final List<dynamic> data = jsonDecode(response.body);
+    return data.cast<Map<String, dynamic>>();
+  } else {
+    throw Exception('スプレッドシートのデータ読み込み失敗');
   }
 }
