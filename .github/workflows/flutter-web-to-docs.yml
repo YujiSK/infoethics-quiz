@@ -1,28 +1,19 @@
-name: Build Flutter Web and Copy to docs
+name: Copy Web Build to Docs Only
 
 on:
   push:
+    paths:
+      - 'build/web/**'
     branches:
-      - main  # ← 必要なら他のブランチ名に変更
+      - main
 
 jobs:
-  build:
+  copy-and-commit:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.19.6' # ← 必要なら他のバージョンに変更
-
-      - name: Install dependencies
-        run: flutter pub get
-
-      - name: Build Flutter Web
-        run: flutter build web --base-href /infoethics-quiz/
 
       - name: Copy build/web to docs/
         run: |
@@ -35,5 +26,5 @@ jobs:
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add docs/
-          git commit -m "🛠 Auto-update GitHub Pages content"
+          git commit -m "📦 自動更新: build/web → docs"
           git push
