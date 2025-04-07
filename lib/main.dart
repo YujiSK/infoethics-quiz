@@ -229,7 +229,7 @@ class QuizPageState extends State<QuizPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('情報技術者倫理クイズ'),
+        title: Text('情報技術者倫理クイズ①'),
         automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
@@ -286,7 +286,7 @@ class QuizPageState extends State<QuizPage> {
                         textStyle: TextStyle(fontSize: 18),
                       ),
                       onPressed: nextQuestion,
-                      child: Text('次の問題へ'),
+                      child: Text(currentQuestion == quizData.length - 1 ? '次へ' : '次の問題へ'),
                     ),
                   ),
                 ],
