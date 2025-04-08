@@ -249,7 +249,7 @@ class QuizPageState extends State<QuizPage> {
   }
 
   String getFeedbackMessage() {
-    double percentage = score / quizData.length;
+    double percentage = quizData.isNotEmpty ? score / quizData.length : 0.0;
 
     if (percentage == 1.0) {
       return '完璧です！素晴らしい理解力！';
