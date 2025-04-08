@@ -316,7 +316,7 @@ class QuizPageState extends State<QuizPage> {
                       ),
                       onPressed: nextQuestion,
                       child: Text(
-                        currentQuestion == quizData.length - 1 ? '次へ' : '次の問題へ',
+                        currentQuestion == quizData.length - 1 ? '終了' : '次の問題へ',
                       ),
                     ),
                   ),
