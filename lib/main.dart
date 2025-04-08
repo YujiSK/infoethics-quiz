@@ -260,10 +260,20 @@ class QuizPageState extends State<QuizPage> {
     if (quizData.isEmpty) {
       return Scaffold(
         appBar: AppBar(
-          title: Text(
-            widget.quizFile.contains('quiz_1.json')
-                ? '情報技術者倫理クイズ1'
-                : '情報技術者倫理クイズ2',
+          title: GestureDetector(
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => TitlePage(selectedQuiz: widget.quizFile),
+                ),
+              );
+            },
+            child: Text(
+              widget.quizFile.contains('quiz_1.json')
+                  ? '情報技術者倫理クイズ1'
+                  : '情報技術者倫理クイズ2',
+            ),
           ),
           automaticallyImplyLeading: false,
         ),
@@ -293,10 +303,20 @@ class QuizPageState extends State<QuizPage> {
     if (currentQuestion >= quizData.length) {
       return Scaffold(
         appBar: AppBar(
-          title: Text(
-            widget.quizFile.contains('quiz_1.json')
-                ? '情報技術者倫理クイズ1'
-                : '情報技術者倫理クイズ2',
+          title: GestureDetector(
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => TitlePage(selectedQuiz: widget.quizFile),
+                ),
+              );
+            },
+            child: Text(
+              widget.quizFile.contains('quiz_1.json')
+                  ? '情報技術者倫理クイズ1'
+                  : '情報技術者倫理クイズ2',
+            ),
           ),
           automaticallyImplyLeading: false,
         ),
@@ -318,7 +338,9 @@ class QuizPageState extends State<QuizPage> {
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => const TitlePage(selectedQuiz: 'assets/data/quiz_1.json')),
+                    MaterialPageRoute(
+                      builder: (context) => TitlePage(selectedQuiz: widget.quizFile),
+                    ),
                   );
                 },
                 child: const Text('最初に戻る'),
@@ -333,10 +355,20 @@ class QuizPageState extends State<QuizPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          widget.quizFile.contains('quiz_1.json')
-              ? '情報技術者倫理クイズ1'
-              : '情報技術者倫理クイズ2',
+        title: GestureDetector(
+          onTap: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => TitlePage(selectedQuiz: widget.quizFile),
+              ),
+            );
+          },
+          child: Text(
+            widget.quizFile.contains('quiz_1.json')
+                ? '情報技術者倫理クイズ1'
+                : '情報技術者倫理クイズ2',
+          ),
         ),
         automaticallyImplyLeading: false,
       ),
