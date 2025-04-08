@@ -22,4 +22,5 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/data/quiz.json
+    - assets/data/quiz_1.json
+    - assets/data/quiz_2.json
