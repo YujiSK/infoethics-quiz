@@ -172,7 +172,7 @@ class QuizPageState extends State<QuizPage> {
   Future<void> _loadQuizData() async {
     try {
       final loadedQuizData = await loadQuizData(widget.quizFile);
-      quizData = await loadQuizData(); // Updated function call
+      developer.log('Loaded quiz data: $loadedQuizData'); // デバッグ用ログ
       setState(() {
         quizData = loadedQuizData;
       });
