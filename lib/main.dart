@@ -168,11 +168,13 @@ class QuizPageState extends State<QuizPage> {
   }
 
   void _shuffleOptions() {
-    shuffledIndices = List<int>.generate(
-      quizData[currentQuestion]['options'].length,
-      (i) => i,
-    );
-    shuffledIndices.shuffle(Random());
+    if (quizData.isNotEmpty && currentQuestion < quizData.length) {
+      shuffledIndices = List<int>.generate(
+        quizData[currentQuestion]['options'].length,
+        (i) => i,
+      );
+      shuffledIndices.shuffle(Random());
+    }
   }
 
   void checkAnswer(int index) {
