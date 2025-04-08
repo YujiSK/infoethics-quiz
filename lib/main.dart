@@ -22,14 +22,28 @@ class QuizApp extends StatelessWidget {
   }
 }
 
-class TitlePage extends StatelessWidget {
+class TitlePage extends StatefulWidget {
   const TitlePage({super.key});
+
+  @override
+  State<TitlePage> createState() => _TitlePageState();
+}
+
+class _TitlePageState extends State<TitlePage> {
+  String _selectedQuiz = 'assets/data/quiz_1.json';
+  final List<String> _quizOptions = [
+    'assets/data/quiz_1.json',
+    'assets/data/quiz_2.json'
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('情報技術者倫理クイズ①'),
+        title: GestureDetector(
+          onTap: () => _showQuizSelectionDialog(context),
+          child: Text(_selectedQuiz.contains('quiz_1.json') ? '情報技術者倫理クイズ1' : '情報技術者倫理クイズ2'),
+        ),
         automaticallyImplyLeading: false,
       ),
       body: Center(
@@ -56,7 +70,7 @@ class TitlePage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const QuizPage(),
+                          builder: (context) => QuizPage(quizFile: _selectedQuiz),
                         ),
                       );
                     },
@@ -129,7 +143,9 @@ class _TitlePageWithSelectionState extends State<TitlePageWithSelection> {
 }
 
 class QuizPage extends StatefulWidget {
-  const QuizPage({super.key});
+  const QuizPage({super.key, required this.quizFile});
+
+  final String quizFile;
 
   @override
   QuizPageState createState() => QuizPageState();
@@ -330,7 +346,11 @@ class QuizPageState extends State<QuizPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('情報技術者倫理クイズ①'),
+        title: Text(
+          widget.quizFile.contains('quiz_1.json')
+              ? '情報技術者倫理クイズ1'
+              : '情報技術者倫理クイズ2',
+        ),
         automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
@@ -440,8 +460,8 @@ class QuizPageState extends State<QuizPage> {
   }
 }
 
-Future<List<Map<String, dynamic>>> loadQuizData() async {
-  final jsonString = await rootBundle.loadString('assets/data/quiz.json');
+Future<List<Map<String, dynamic>>> loadQuizData(String quizFile) async {
+  final jsonString = await rootBundle.loadString(quizFile);
   final List<dynamic> jsonData = json.decode(jsonString);
   return List<Map<String, dynamic>>.from(jsonData);
 }
