@@ -155,7 +155,11 @@ class QuizPageState extends State<QuizPage> {
 
   Future<void> _loadQuizData() async {
     try {
+      final loadedQuizData = await loadQuizData(widget.quizFile);
       quizData = await loadQuizData(); // Updated function call
+      setState(() {
+        quizData = loadedQuizData;
+      });
       _shuffleOptions();
       _updateProgress();
     } catch (e) {
