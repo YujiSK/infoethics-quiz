@@ -94,6 +94,12 @@ class _TitlePageState extends State<TitlePage> {
   }
 
   Future<void> _showQuizSelectionDialog(BuildContext context) async {
+    // マッピング用のラベルリスト
+    final Map<String, String> quizLabels = {
+      'assets/data/quiz_1.json': '第一回講義',
+      'assets/data/quiz_2.json': '第二回講義',
+    };
+
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
@@ -105,7 +111,7 @@ class _TitlePageState extends State<TitlePage> {
                 return GestureDetector(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text(quiz),
+                    child: Text(quizLabels[quiz] ?? quiz), // ラベルを表示
                   ),
                   onTap: () {
                     setState(() {
