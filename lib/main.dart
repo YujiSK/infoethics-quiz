@@ -218,9 +218,13 @@ class QuizPageState extends State<QuizPage> {
   }
 
   void _updateProgress() {
-    progress = (currentQuestion + 1) / quizData.length;
-    if (answered && currentQuestion == quizData.length - 1) {
-      progress = 1.0;
+    if (quizData.isNotEmpty) {
+      progress = (currentQuestion + 1) / quizData.length;
+      if (answered && currentQuestion == quizData.length - 1) {
+        progress = 1.0;
+      }
+    } else {
+      progress = 0.0;
     }
   }
 
