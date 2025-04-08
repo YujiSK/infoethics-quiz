@@ -252,10 +252,49 @@ class QuizPageState extends State<QuizPage> {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
+    if (quizData.isEmpty) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(
+            widget.quizFile.contains('quiz_1.json')
+                ? '情報技術者倫理クイズ1'
+                : '情報技術者倫理クイズ2',
+          ),
+          automaticallyImplyLeading: false,
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text('クイズデータがありません。'),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TitlePageWithSelection(
+                        selectedQuiz: widget.quizFile,
+                      ),
+                    ),
+                  );
+                },
+                child: const Text('タイトル画面に戻る'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     if (currentQuestion >= quizData.length) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text('情報技術者倫理クイズ①'),
+          title: Text(
+            widget.quizFile.contains('quiz_1.json')
+                ? '情報技術者倫理クイズ1'
+                : '情報技術者倫理クイズ2',
+          ),
           automaticallyImplyLeading: false,
         ),
         body: Center(
