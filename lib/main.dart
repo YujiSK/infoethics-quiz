@@ -70,6 +70,62 @@ class TitlePage extends StatelessWidget {
       ),
     );
   }
+
+  Future<void> _showQuizSelectionDialog(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('クイズを選択'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: _quizOptions.map((quiz) {
+                return GestureDetector(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(quiz),
+                  ),
+                  onTap: () {
+                    setState(() {
+                      _selectedQuiz = quiz;
+                    });
+                    Navigator.of(context).pop();
+                  },
+                );
+              }).toList(),
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('閉じる'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class TitlePageWithSelection extends StatefulWidget {
+  final String selectedQuiz;
+
+  const TitlePageWithSelection({super.key, required this.selectedQuiz});
+
+  @override
+  State<TitlePageWithSelection> createState() => _TitlePageWithSelectionState();
+}
+
+class _TitlePageWithSelectionState extends State<TitlePageWithSelection> {
+  @override
+  void initState() => super.initState();
+
+  @override
+  Widget build(BuildContext context) {
+    return const TitlePage();
+  }
 }
 
 class QuizPage extends StatefulWidget {
