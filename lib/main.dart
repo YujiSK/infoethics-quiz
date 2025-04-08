@@ -17,24 +17,32 @@ class QuizApp extends StatelessWidget {
       title: '情報倫理クイズ',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: const TitlePage(),
+      home: const TitlePage(selectedQuiz: 'assets/data/quiz_1.json'),
     );
   }
 }
 
 class TitlePage extends StatefulWidget {
-  const TitlePage({super.key});
+  final String selectedQuiz;
+
+  const TitlePage({super.key, required this.selectedQuiz});
 
   @override
   State<TitlePage> createState() => _TitlePageState();
 }
 
 class _TitlePageState extends State<TitlePage> {
-  String _selectedQuiz = 'assets/data/quiz_1.json';
+  late String _selectedQuiz;
   final List<String> _quizOptions = [
     'assets/data/quiz_1.json',
     'assets/data/quiz_2.json'
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedQuiz = widget.selectedQuiz;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -120,25 +128,6 @@ class _TitlePageState extends State<TitlePage> {
         );
       },
     );
-  }
-}
-
-class TitlePageWithSelection extends StatefulWidget {
-  final String selectedQuiz;
-
-  const TitlePageWithSelection({super.key, required this.selectedQuiz});
-
-  @override
-  State<TitlePageWithSelection> createState() => _TitlePageWithSelectionState();
-}
-
-class _TitlePageWithSelectionState extends State<TitlePageWithSelection> {
-  @override
-  void initState() => super.initState();
-
-  @override
-  Widget build(BuildContext context) {
-    return const TitlePage();
   }
 }
 
@@ -289,9 +278,7 @@ class QuizPageState extends State<QuizPage> {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => TitlePageWithSelection(
-                        selectedQuiz: widget.quizFile,
-                      ),
+                      builder: (context) => TitlePage(selectedQuiz: widget.quizFile),
                     ),
                   );
                 },
@@ -331,7 +318,7 @@ class QuizPageState extends State<QuizPage> {
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => const TitlePage()),
+                    MaterialPageRoute(builder: (context) => const TitlePage(selectedQuiz: 'assets/data/quiz_1.json')),
                   );
                 },
                 child: const Text('最初に戻る'),
